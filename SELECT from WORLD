@@ -1,30 +1,72 @@
-SELECT name, continent, population FROM world
+-- 1. Seleciona todos os países mostrando o nome, continente e população.
+SELECT name, continent, population FROM world;
 
+-- 2. Seleciona os nomes dos países com população superior a 200 milhões.
 SELECT name FROM world
-WHERE population > 200000000
+WHERE population > 200000000;
 
+-- 3. Calcula o PIB per capita (PIB dividido pela população) para países com população de pelo menos 200 milhões.
 SELECT name, gdp / population AS gdp_per_capita
 FROM world
-WHERE population >= 200000000
+WHERE population >= 200000000;
 
+-- 4. Mostra o nome dos países da América do Sul com a população expressa em milhões (duas casas decimais).
 SELECT name, population / 1000000 AS population_millions
 FROM world
-WHERE continent = 'South America'
+WHERE continent = 'South America';
 
+-- 5. Mostra o nome e a população dos países França, Alemanha e Itália.
 SELECT name, population
 FROM world
-WHERE name IN ('France', 'Germany', 'Italy')
+WHERE name IN ('France', 'Germany', 'Italy');
 
+-- 6. Mostra os países cujo nome inclui a palavra 'United'.
 SELECT name
 FROM world
-WHERE name LIKE '%United%'
+WHERE name LIKE '%United%';
 
+-- 7. Mostra países com **grande área** (mais de 3 milhões km²) **ou** **grande população** (mais de 250 milhões).
 SELECT name, population, area
 FROM world
 WHERE area > 3000000
-   OR population > 250000000
+   OR population > 250000000;
 
+-- 8. Mostra os países que são **grandes em área ou em população**, mas **não em ambos** (OR exclusivo - XOR).
 SELECT name, population, area
 FROM world
 WHERE (area > 3000000 AND population <= 250000000)
-   OR (area <= 3000000 AND population > 250000000)
+   OR (area <= 3000000 AND population > 250000000);
+
+-- 9. Mostra os países da América do Sul com a população em milhões e o PIB em bilhões, arredondando ambos com 2 casas decimais.
+SELECT name,
+  ROUND(population / 1000000.0, 2) AS population_million,
+  ROUND(gdp / 1000000000.0, 2) AS gdp_billion
+FROM world
+WHERE continent = 'South America';
+
+-- 10. Mostra países com PIB de pelo menos 1 trilhão, exibindo o PIB per capita arredondado para o milhar mais próximo.
+SELECT name,
+  ROUND(gdp / population, -3) AS gdp_per_capita
+FROM world
+WHERE gdp >= 1000000000000;
+
+-- 11. Mostra países em que o nome e a capital possuem o mesmo número de caracteres.
+SELECT name, capital
+FROM world
+WHERE LENGTH(name) = LENGTH(capital);
+
+-- 12. Mostra países em que o nome e a capital começam com a mesma letra, mas são diferentes.
+SELECT name, capital
+FROM world
+WHERE LEFT(name, 1) = LEFT(capital, 1)
+  AND name <> capital;
+
+-- 13. Mostra países que contêm todas as vogais (a, e, i, o, u) no nome e não possuem espaços (ou seja, nomes de uma única palavra).
+SELECT name
+FROM world
+WHERE name LIKE '%a%'
+  AND name LIKE '%e%'
+  AND name LIKE '%i%'
+  AND name LIKE '%o%'
+  AND name LIKE '%u%'
+  AND name NOT LIKE '% %';
