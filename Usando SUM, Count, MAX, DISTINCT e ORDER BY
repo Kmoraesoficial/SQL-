@@ -1,1 +1,15 @@
+-- Soma a população e o PIB de todos os países da Europa
+SELECT SUM(population), SUM(gdp)  
+  FROM world
+  WHERE continent = 'Europe';
 
+-- Lista todos os continentes existentes na tabela, sem repetições
+SELECT DISTINCT continent 
+  FROM world;
+
+-- Lista o nome e a população de países com mais de 100 milhões de habitantes,
+-- ordenados da maior para a menor população
+SELECT name, population   
+  FROM world
+  WHERE population > 100000000
+  ORDER BY population DESC;
