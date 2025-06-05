@@ -1,28 +1,36 @@
+-- Lista os países cuja população é maior que a da Rússia.
 SELECT name
 FROM world
-WHERE population > ( SELECT population
+WHERE population > ( 
+  SELECT population
   FROM world
   WHERE name = 'Russia')
 
+-- Lista os países da Europa com PIB per capita maior que o do Reino Unido.
 SELECT name
 FROM world
 WHERE continent = 'Europe'
-  AND (gdp / population) > ( SELECT gdp / population
+  AND (gdp / population) > ( 
+    SELECT gdp / population
     FROM world
     WHERE name = 'United Kingdom')
 
+-- Lista os países que estão no mesmo continente que Argentina ou Austrália, com nome e continente.
 SELECT name, continent
 FROM world
-WHERE continent IN ( SELECT continent FROM world WHERE name = 'Argentina'
+WHERE continent IN ( 
+  SELECT continent FROM world WHERE name = 'Argentina'
   UNION
   SELECT continent FROM world WHERE name = 'Australia')
 ORDER BY name
 
+-- Lista os países com população entre a do Reino Unido e da Alemanha.
 SELECT name, population
 FROM world
 WHERE population > (SELECT population FROM world WHERE name = 'United Kingdom')
   AND population < (SELECT population FROM world WHERE name = 'Germany')
 
+-- Mostra os países da Europa com a porcentagem da população em relação à população da Alemanha.
 SELECT name,
        CONCAT(ROUND((population / (
            SELECT population FROM world WHERE name = 'Germany'
@@ -30,36 +38,45 @@ SELECT name,
 FROM world
 WHERE continent = 'Europe'
 
+-- Lista os países com PIB maior que todos os países da Europa.
 SELECT name
 FROM world
-WHERE gdp > ALL (SELECT gdp
+WHERE gdp > ALL (
+  SELECT gdp
   FROM world
   WHERE continent = 'Europe'
     AND gdp IS NOT NULL)
 
+-- Lista o país com maior área de cada continente.
 SELECT continent, name, area
 FROM world x
-WHERE area >= ALL (  SELECT area
+WHERE area >= ALL (
+  SELECT area
   FROM world y
   WHERE y.continent = x.continent
     AND area IS NOT NULL)
 
+-- Lista o país com o nome mais curto (alfabeticamente primeiro) de cada continente.
 SELECT continent, name
 FROM world x
 WHERE name = (SELECT MIN(name)
   FROM world y
   WHERE y.continent = x.continent)
 
+-- Lista os países pertencentes a continentes onde todos os países têm população inferior ou igual a 25 milhões.
 SELECT name, continent, population
 FROM world
-WHERE continent IN (SELECT continent
+WHERE continent IN (
+  SELECT continent
   FROM world
   GROUP BY continent
   HAVING MAX(population) <= 25000000)
 
+-- Lista os países que têm população mais que o triplo de qualquer outro país do mesmo continente (ou são únicos no continente).
 SELECT name, continent
 FROM world x
-WHERE NOT EXISTS ( SELECT 1
+WHERE NOT EXISTS (
+  SELECT 1
   FROM world y
   WHERE y.continent = x.continent
     AND y.name != x.name
