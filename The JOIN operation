@@ -1,0 +1,92 @@
+-- Lista o ID da partida e o nome do jogador para todos os gols marcados pelo time da Alemanha (teamid = 'GER')
+SELECT matchid, player
+FROM goal
+WHERE teamid = 'GER';
+
+-- Mostra os detalhes da partida com ID 1012: estádio, time1 e time2
+SELECT id, stadium, team1, team2
+FROM game
+WHERE id = 1012;
+
+-- Para todos os gols da Alemanha, mostra jogador, teamid, estádio e data da partida
+SELECT player, teamid, stadium, mdate
+FROM game
+JOIN goal ON game.id = goal.matchid
+WHERE teamid = 'GER';
+
+-- Lista os times e jogadores para todos os gols marcados por jogadores cujo nome começa com 'Mario'
+SELECT team1, team2, player
+FROM game
+JOIN goal ON game.id = goal.matchid
+WHERE player LIKE 'Mario%';
+
+-- Mostra os jogadores, time, treinador e tempo do gol para todos os gols marcados nos primeiros 10 minutos
+SELECT player, goal.teamid, coach, gtime
+FROM goal
+JOIN eteam ON goal.teamid = eteam.id
+WHERE gtime <= 10;
+
+-- Lista datas das partidas e o nome do time1 em que 'Fernando Santos' foi o técnico
+SELECT mdate, teamname
+FROM game
+JOIN eteam ON game.team1 = eteam.id
+WHERE coach = 'Fernando Santos';
+
+-- Lista jogadores que marcaram gols em partidas realizadas no estádio 'National Stadium, Warsaw'
+SELECT goal.player
+FROM goal
+JOIN game ON goal.matchid = game.id
+WHERE game.stadium = 'National Stadium, Warsaw';
+
+-- Lista jogadores distintos que marcaram gols contra a Alemanha (ou seja, gols em jogos com Alemanha, mas de times diferentes)
+SELECT DISTINCT player
+FROM game 
+JOIN goal ON matchid = id 
+WHERE (team1 = 'GER' OR team2 = 'GER')
+  AND teamid != 'GER';
+
+-- Mostra o nome do time e o total de gols marcados por cada time, ordenado pelo nome do time
+SELECT teamname, COUNT(*) AS total_goals
+FROM eteam 
+JOIN goal ON id = teamid
+GROUP BY teamname
+ORDER BY teamname;
+
+-- Mostra o estádio e o total de gols marcados em cada estádio, ordenado pelo nome do estádio
+SELECT stadium, COUNT(*) AS total_goals
+FROM game
+JOIN goal ON game.id = goal.matchid
+GROUP BY stadium
+ORDER BY stadium;
+
+-- Para cada partida envolvendo a Polônia ('POL'), mostra o ID da partida, data e total de gols marcados
+SELECT game.id AS matchid, game.mdate, COUNT(goal.player) AS total_goals
+FROM game
+JOIN goal ON game.id = goal.matchid
+WHERE game.team1 = 'POL' OR game.team2 = 'POL'
+GROUP BY game.id, game.mdate
+ORDER BY game.id;
+
+-- Para cada partida onde a Alemanha ('GER') marcou, mostra o ID da partida, data e número de gols marcados pela Alemanha
+SELECT g.id AS matchid, g.mdate, COUNT(goal.player) AS goals_by_GER
+FROM game g
+JOIN goal ON g.id = goal.matchid
+WHERE goal.teamid = 'GER'
+GROUP BY g.id, g.mdate
+ORDER BY g.id;
+
+-- Lista todas as partidas com os gols marcados por cada equipe, usando CASE WHEN para contar gols de time1 e time2
+SELECT
+  g.mdate AS data,
+  g.team1 AS equipe1,
+  SUM(CASE WHEN goal.teamid = g.team1 THEN 1 ELSE 0 END) AS pontuacao1,
+  g.team2 AS equipe2,
+  SUM(CASE WHEN goal.teamid = g.team2 THEN 1 ELSE 0 END) AS pontuacao2
+FROM
+  game g
+LEFT JOIN
+  goal ON g.id = goal.matchid
+GROUP BY
+  g.mdate, g.id, g.team1, g.team2
+ORDER BY
+  g.mdate, g.id, g.team1, g.team2;
