@@ -1,8 +1,11 @@
+-- Seleciona a população da Alemanha
 SELECT population FROM world
-  WHERE name = 'Germany'
+WHERE name = 'Germany';
 
+-- Seleciona o nome e a população dos países Suécia, Noruega e Dinamarca
 SELECT name, population FROM world
-  WHERE name IN ('Sweden', 'Norway', 'Denmark');
+WHERE name IN ('Sweden', 'Norway', 'Denmark');
 
+-- Seleciona o nome e a área dos países cuja área está entre 200.000 e 250.000 (inclusive)
 SELECT name, area FROM world
-  WHERE area BETWEEN 200000 AND 250000
+WHERE area BETWEEN 200000 AND 250000;
